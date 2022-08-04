@@ -6,16 +6,14 @@ public static class Exists
     {
         await using NpgsqlConnection conn = new(ConfigurationManager.ConnectionStrings["postgres"].ConnectionString);
         await conn.OpenAsync();
-        if (conn.State == System.Data.ConnectionState.Open)
-            return true;
-        else return false;
+        return conn.State == System.Data.ConnectionState.Open;
     }
     // Проверка пользователя
     public static async Task<int> ExistsUsers(string username)
     {
         await using var con = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["postgres"].ConnectionString);
         con.Open();
-        string sql = $@" select id from public.""users"" where login = '{username}' LIMIT 1 ";
+        var sql = $@" select id from public.""users"" where login = '{username}' LIMIT 1 ";
         await using var cmd = new NpgsqlCommand(sql, con);
 
         await using var rdr = cmd.ExecuteReader();
@@ -24,11 +22,11 @@ public static class Exists
 
     }
     // Проверка Роли
-    public static async Task<int> ExistsRoles(string rolename)
+    public static async Task<int> ExistsRoles(string roleName)
     {
         await using var con = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["postgres"].ConnectionString);
         con.Open();
-        string sql = $@" select id from public.""role"" where name = '{rolename}' LIMIT 1 ";
+        var sql = $@" select id from public.""role"" where name = '{roleName}' LIMIT 1 ";
         await using var cmd = new NpgsqlCommand(sql, con);
 
         await using var rdr = cmd.ExecuteReader();
@@ -36,11 +34,38 @@ public static class Exists
         return rdr.Read() ? rdr.GetInt32(0) : 0;
 
     }
-     public static async Task<int> ExistsUserRoles(int idRole , int idUser)
+    public static async Task<int> ExistsDepartment(string name)
     {
         await using var con = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["postgres"].ConnectionString);
         con.Open();
-        string sql = $@" select id from public.""usersrole"" where idrole = {idRole} and iduser = {idUser} LIMIT 1 ";
+        var sql = $@" select id from public.""department"" where namedepartment = '{name}' LIMIT 1 ";
+        await using var cmd = new NpgsqlCommand(sql, con);
+
+        await using var rdr = cmd.ExecuteReader();
+
+        return rdr.Read() ? rdr.GetInt32(0) : 0;
+
+    }
+
+
+    public static async Task<int> ExistsArea(string name)
+    {
+        await using var con = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["postgres"].ConnectionString);
+        con.Open();
+        var sql = $@" select id from public.""workarea"" where namearea = '{name}' LIMIT 1 ";
+        await using var cmd = new NpgsqlCommand(sql, con);
+
+        await using var rdr = cmd.ExecuteReader();
+
+        return rdr.Read() ? rdr.GetInt32(0) : 0;
+
+    }
+
+    public static async Task<int> ExistsUserRoles(int idRole , int idUser)
+    {
+        await using var con = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["postgres"].ConnectionString);
+        con.Open();
+        var sql = $@" select id from public.""usersrole"" where idrole = {idRole} and iduser = {idUser} LIMIT 1 ";
         await using var cmd = new NpgsqlCommand(sql, con);
 
         await using var rdr = cmd.ExecuteReader();
