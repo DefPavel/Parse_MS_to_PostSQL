@@ -27,6 +27,63 @@ public static class MsSqlService
         }
         return array;
     }
+
+    public static async Task<IEnumerable<Persons>> GetAllPersons()
+    {
+        var array = new List<Persons>();
+        await using var con = new SqlConnection(_connectionString);
+        con.Open();
+        const string sql = " select " +
+                           " d.nameDepartment, " +
+                           " tQ.nameQualification, " +
+                           " surname, " +
+                           " name               , " +
+                           " patronymic          ," +
+                           " gender              ," +
+                           " birthday           ," +
+                           " addressCountry      ," +
+                           " addressRegion       ," +
+                           " addressArea         ," +
+                           " addressCity         ," +
+                           " addressStreet       ," +
+                           " addressHome        ," +
+                           " addressFlat        ," +
+                           " trainingDirection   ," +
+                           " profile             ," +
+                           " academLeave         ," +
+                           " dismiss           ," +
+                           " yearIssue          ," +
+                           " phone1            ," +
+                           " phone2              ," +
+                           " cipher             ," +
+                           " mail               ," +
+                           " planningEnterMag   ," +
+                           " enteredMag          ," +
+                           " changeSurname       ," +
+                           " othere              ," +
+                           " phone3 " +
+                           " from persons as per " +
+                           " inner join department d on per.idTypeDepartment = d.id " +
+                           " inner join  typeQualification tQ on per.idTypeQualification = tQ.id ";
+
+        await using var cmd = new SqlCommand(sql, con);
+        await using var rdr = await cmd.ExecuteReaderAsync();
+        while (await rdr.ReadAsync())
+        {
+            array.Add(new Persons
+            {
+                Department = rdr.GetString(0),
+                Qualification = rdr.GetString(1),
+                FirstName = rdr.GetString(2),
+                Name = rdr.GetString(3),
+                LastName = rdr.GetString(4),
+                Gender = rdr.GetString(5),
+                Bithday = rdr.GetDateTime(6),
+
+            });
+        }
+        return array;
+    }
     public static async Task<IEnumerable<Departments>> GetAllDepartments()
     {
         var array = new List<Departments>();

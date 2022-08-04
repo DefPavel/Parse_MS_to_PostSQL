@@ -108,19 +108,19 @@ public static class PostSqlService
         return row;
     }
 
-    public static async Task<int> AddPerson(City city)
+    public static async Task<int> AddPerson(Persons person)
     {
         await using var con = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["postgres"].ConnectionString);
         con.Open();
 
         // Найти по имени
-        var exists = await Exists.ExistsArea(city.NameAria);
+        var exists = await Exists.ExistsDepartment(person.Department);
 
-        const string sql = @"INSERT INTO public.""workcity""(nameCity, idworkarea) values(@nameCity , @idworkarea) RETURNING id";
+        const string sql = @"INSERT INTO public.""persons""(idtypedepartment, idtypequalification) values(@idtypedepartment , @idtypequalification) RETURNING id";
         await using var cmd = new NpgsqlCommand(sql, con);
 
-        cmd.Parameters.AddWithValue("nameCity", city.NameCity);
-        cmd.Parameters.AddWithValue("idworkarea", exists);
+        cmd.Parameters.AddWithValue("idtypedepartment", exists);
+        cmd.Parameters.AddWithValue("idtypequalification", person.Qualification == "бакалавр" ? 1 : 2);
 
         await cmd.PrepareAsync();
 
