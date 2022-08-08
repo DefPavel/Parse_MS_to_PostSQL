@@ -46,18 +46,22 @@ foreach (var item in departments)
 #endregion
 
 #region Города и Регионы
-
-var city = await MsSqlService.GetAllCity();
+/*var city = await MsSqlService.GetAllCity();
 
 foreach (var item in city)
 {
     await PostSqlService.AddCity(item);
     Console.WriteLine("Insert City");
 }
-
+*/
 #endregion
 
 #region Персоны
+// Забираем все людей из старой базы
+var persons = await MsSqlService.GetAllPersons();
+
+Console.WriteLine(persons.Count());
+
 
 #endregion
 

@@ -116,11 +116,101 @@ public static class PostSqlService
         // Найти по имени
         var exists = await Exists.ExistsDepartment(person.Department);
 
-        const string sql = @"INSERT INTO public.""persons""(idtypedepartment, idtypequalification) values(@idtypedepartment , @idtypequalification) RETURNING id";
+        const string sql = @"INSERT INTO public.""persons""
+            (
+            idtypedepartment, 
+            idtypequalification,
+            surname,
+            name,
+            patronymic,
+            gender,
+            birthday,
+            addresscountry,
+            addressregion,
+            addressarea,
+            addresscity,
+            addressstreet,
+            addresshome,
+            addressflat,
+            trainingdirection,
+            profile,
+            academleave,
+            dismiss,
+            yearissue,
+            phone1,
+            phone2,
+            cipher,
+            mail,
+            planningentermag,
+            enteredmag,
+            changesurname,
+            othere,
+            phone3,
+            ) 
+            values(
+                    @idtypedepartment , 
+                    @idtypequalification,
+                    @surname,
+                    @name,
+                    @patronymic,
+                    @gender,
+                    @birthday,
+                    @addresscountry,
+                    @addressregion,
+                    @addressarea,
+                    @addresscity,
+                    @addressstreet,
+                    @addresshome,
+                    @addressflat,
+                    @trainingdirection,
+                    @profile,
+                    @academleave,
+                    @dismiss,
+                    @yearissue,
+                    @phone1,
+                    @phone2,
+                    @cipher,
+                    @mail,
+                    @planningentermag,
+                    @enteredmag,
+                    @changesurname,
+                    @othere,
+                    @phone3
+
+            ) RETURNING id";
         await using var cmd = new NpgsqlCommand(sql, con);
 
         cmd.Parameters.AddWithValue("idtypedepartment", exists);
         cmd.Parameters.AddWithValue("idtypequalification", person.Qualification == "бакалавр" ? 1 : 2);
+        cmd.Parameters.AddWithValue("surname", person.FirstName);
+        cmd.Parameters.AddWithValue("name", person.Name);
+        cmd.Parameters.AddWithValue("patronymic", person.LastName);
+        cmd.Parameters.AddWithValue("gender", person.Gender);
+
+        cmd.Parameters.AddWithValue("addresscountry", person.Country);
+        cmd.Parameters.AddWithValue("addressregion", person.Region);
+        cmd.Parameters.AddWithValue("addressarea", person.Area);
+        cmd.Parameters.AddWithValue("addresscity", person.City);
+        cmd.Parameters.AddWithValue("addressstreet", person.Street);
+        cmd.Parameters.AddWithValue("addresshome", person.Home);
+        cmd.Parameters.AddWithValue("addressflat", person.Flat);
+
+        cmd.Parameters.AddWithValue("trainingdirection", person.TrainingDirection);
+        cmd.Parameters.AddWithValue("profile", person.Profile);
+        cmd.Parameters.AddWithValue("academleave", person.AcademLeave);
+        cmd.Parameters.AddWithValue("dismiss", person.Dismiss);
+        cmd.Parameters.AddWithValue("yearissue", person.YearIssue);
+
+        cmd.Parameters.AddWithValue("phone1", person.Phone1);
+        cmd.Parameters.AddWithValue("phone2", person.Phone2);
+        cmd.Parameters.AddWithValue("phone3", person.Phone3);
+
+        cmd.Parameters.AddWithValue("cipher", person.Cipher);
+        cmd.Parameters.AddWithValue("mail", person.Mail);
+        cmd.Parameters.AddWithValue("planningentermag", person.PlanningEnterMag);
+        cmd.Parameters.AddWithValue("enteredmag", person.EnteredMag);
+        cmd.Parameters.AddWithValue("changesurname", person.ChangeSurname);
+        cmd.Parameters.AddWithValue("othere", person.Othere);
 
         await cmd.PrepareAsync();
 

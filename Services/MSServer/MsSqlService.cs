@@ -34,34 +34,34 @@ public static class MsSqlService
         await using var con = new SqlConnection(_connectionString);
         con.Open();
         const string sql = " select " +
-                           " d.nameDepartment, " +
-                           " tQ.nameQualification, " +
-                           " surname, " +
-                           " name               , " +
-                           " patronymic          ," +
-                           " gender              ," +
-                           " birthday           ," +
-                           " addressCountry      ," +
-                           " addressRegion       ," +
-                           " addressArea         ," +
-                           " addressCity         ," +
-                           " addressStreet       ," +
-                           " addressHome        ," +
-                           " addressFlat        ," +
-                           " trainingDirection   ," +
-                           " profile             ," +
-                           " academLeave         ," +
-                           " dismiss           ," +
-                           " yearIssue          ," +
-                           " phone1            ," +
-                           " phone2              ," +
-                           " cipher             ," +
-                           " mail               ," +
-                           " planningEnterMag   ," +
-                           " enteredMag          ," +
-                           " changeSurname       ," +
-                           " othere              ," +
-                           " phone3 " +
+                           " d.nameDepartment, " +      //0
+                           " tQ.nameQualification, " +  //1
+                           " surname, " +               //2
+                           " name               , " +   //3
+                           " patronymic          ," +   //4
+                           " gender              ," +   //5
+                           " birthday           ," +    //6
+                           " addressCountry      ," +   //7
+                           " addressRegion       ," +   //8
+                           " addressArea         ," +   //9
+                           " addressCity         ," +   //10
+                           " addressStreet       ," +   //11
+                           " addressHome        ," +    //12
+                           " addressFlat        ," +    //13
+                           " trainingDirection   ," +   //14
+                           " profile             ," +   //15
+                           " academLeave         ," +   //16
+                           " dismiss           ," +     //17
+                           " yearIssue          ," +    //18
+                           " phone1            ," +     //19 
+                           " phone2              ," +   //20
+                           " cipher             ," +    //21
+                           " mail               ," +    //22
+                           " planningEnterMag   ," +    //23
+                           " enteredMag          ," +   //24
+                           " changeSurname       ," +   //25
+                           " othere              ," +   //26
+                           " phone3 " +                 //27
                            " from persons as per " +
                            " inner join department d on per.idTypeDepartment = d.id " +
                            " inner join  typeQualification tQ on per.idTypeQualification = tQ.id ";
@@ -79,6 +79,27 @@ public static class MsSqlService
                 LastName = rdr.GetString(4),
                 Gender = rdr.GetString(5),
                 Bithday = rdr.GetDateTime(6),
+                Country = rdr[7] != DBNull.Value ? rdr.GetString(7) : "",
+                Region = rdr[8] != DBNull.Value ? rdr.GetString(8) : "",
+                City = rdr[9] != DBNull.Value ? rdr.GetString(9) : "",
+                Area = rdr[10] != DBNull.Value ? rdr.GetString(10) : "",
+                Street = rdr[11] != DBNull.Value ? rdr.GetString(11) : "",
+                Home = rdr[12] != DBNull.Value ? rdr.GetString(12) : "",
+                Flat = rdr[13] != DBNull.Value ? rdr.GetString(13) : "",
+                TrainingDirection = rdr[14] != DBNull.Value ? rdr.GetString(14) : "",
+                Profile = rdr[15] != DBNull.Value ? rdr.GetString(15) : "",
+                AcademLeave = rdr[16] != DBNull.Value ? rdr.GetString(16) : "",
+                Dismiss = rdr[17] != DBNull.Value ? rdr.GetString(17) : "",
+                YearIssue = rdr[18] != DBNull.Value ? rdr.GetInt16(18) : 0,
+                Phone1 = rdr[19] != DBNull.Value ? rdr.GetString(19) : "",
+                Phone2 = rdr[20] != DBNull.Value ? rdr.GetString(20) : "",
+                Cipher = rdr[21] != DBNull.Value ? rdr.GetString(21) : "",
+                Mail = rdr[22] != DBNull.Value ? rdr.GetString(22) : "",
+                PlanningEnterMag = rdr[23] != DBNull.Value ? rdr.GetString(23) : "",
+                EnteredMag = rdr[24] != DBNull.Value ? rdr.GetString(24) : "",
+                ChangeSurname = rdr[25] != DBNull.Value ? rdr.GetString(25) : "",
+                Othere = rdr[26] != DBNull.Value ? rdr.GetString(26) : "",
+                Phone3 = rdr[27] != DBNull.Value ? rdr.GetString(27) : "",
 
             });
         }
