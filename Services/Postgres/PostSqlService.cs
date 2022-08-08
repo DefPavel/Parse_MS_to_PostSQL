@@ -116,8 +116,7 @@ public static class PostSqlService
         // Найти по имени
         var exists = await Exists.ExistsDepartment(person.Department);
 
-        const string sql = @"INSERT INTO public.""persons""
-            (
+        const string sql = @"INSERT INTO public.""persons"" (
             idtypedepartment, 
             idtypequalification,
             surname,
@@ -145,9 +144,7 @@ public static class PostSqlService
             enteredmag,
             changesurname,
             othere,
-            phone3,
-            ) 
-            values(
+            phone3) values(
                     @idtypedepartment , 
                     @idtypequalification,
                     @surname,
@@ -175,9 +172,7 @@ public static class PostSqlService
                     @enteredmag,
                     @changesurname,
                     @othere,
-                    @phone3
-
-            ) RETURNING id";
+                    @phone3 ) RETURNING id";
         await using var cmd = new NpgsqlCommand(sql, con);
 
         cmd.Parameters.AddWithValue("idtypedepartment", exists);
@@ -186,6 +181,7 @@ public static class PostSqlService
         cmd.Parameters.AddWithValue("name", person.Name);
         cmd.Parameters.AddWithValue("patronymic", person.LastName);
         cmd.Parameters.AddWithValue("gender", person.Gender);
+        cmd.Parameters.AddWithValue("birthday", person.Bithday);
 
         cmd.Parameters.AddWithValue("addresscountry", person.Country);
         cmd.Parameters.AddWithValue("addressregion", person.Region);

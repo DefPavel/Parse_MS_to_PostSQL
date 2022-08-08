@@ -40,7 +40,7 @@ foreach (var item in users)
 foreach (var item in departments)
 {
     await PostSqlService.AddDepartment(item.Name);
-    Console.WriteLine("Insert");
+    Console.WriteLine("Add Department");
 }
 */
 #endregion
@@ -60,8 +60,11 @@ foreach (var item in city)
 // Забираем все людей из старой базы
 var persons = await MsSqlService.GetAllPersons();
 
-Console.WriteLine(persons.Count());
-
+foreach (var item in persons)
+{
+    var idPerson = await PostSqlService.AddPerson(item);
+    Console.WriteLine($"Add Person: {idPerson}");
+}
 
 #endregion
 
