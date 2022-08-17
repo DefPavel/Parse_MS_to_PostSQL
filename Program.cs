@@ -64,10 +64,27 @@ foreach (var item in persons)
 {
     var idPerson = await PostSqlService.AddPerson(item);
     Console.WriteLine($"Add Person: {idPerson}");
+
+    var persWork = await MsSqlService.GetWorksToPerson(idPerson);
+
+    if (persWork.Any())
+    {
+        foreach (var works in persWork)
+        {
+            var workAdress = await Exists.ExistsCity(works.WorkAdress);
+            var freeWork = await Exists.ExistsFreeWork(works.FreeWork);
+            var newPerson = await Exists.ExistsPerson(idPerson);
+            works.IdPerson = newPerson;
+            if(freeWork == 0) freeWork = 1;
+            if(workAdress == 0) workAdress = 1;
+
+
+            var itemPersonToWork = await PostSqlService.AddPersonToWorks(works, workAdress, freeWork);
+            Console.WriteLine($"Add PersonToWork: {itemPersonToWork}");
+            
+           
+        }
+    }
 }
-
 #endregion
 
-#region Персоны-Работа
-
-#endregion

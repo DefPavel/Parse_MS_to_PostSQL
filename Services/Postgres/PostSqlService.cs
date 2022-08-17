@@ -108,6 +108,105 @@ public static class PostSqlService
         return row;
     }
 
+    public static async Task<int> AddPersonToWorks(PersonWorks person , int idWorkAdress , int idFreeWork)
+    {
+        await using var con = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["postgres"].ConnectionString);
+        con.Open();
+
+        const string sql = @"INSERT INTO public.""perstowork"" (
+            idpers, 
+            idfreework,
+            namestateorg,
+            nameorg,
+            post,
+            pedspecialty,
+            numcertificate,
+            numreference,
+            verificationarrival,
+            verificationyear1,
+            verificationyear2,
+            verificationyear3,
+            datetcontract,
+            commentary1,
+            datecrt,
+            educational,
+            cityorg,
+            infoorg,
+            decree,
+            infoverificationarrival,
+            commentary2,
+            plandop,
+            phoneorg,
+            phonecity,
+            mailwork,
+            idworkadress
+                ) values(
+                @idpers, 
+                @idfreework,
+                @namestateorg,
+                @nameorg,
+                @post,
+                @pedspecialty,
+                @numcertificate,
+                @numreference,
+                @verificationarrival,
+                @verificationyear1,
+                @verificationyear2,
+                @verificationyear3,
+                @datetcontract,
+                @commentary1,
+                @datecrt,
+                @educational,
+                @cityorg,
+                @infoorg,
+                @decree,
+                @infoverificationarrival,
+                @commentary2,
+                @plandop,
+                @phoneorg,
+                @phonecity,
+                @mailwork,
+                @idworkadress    
+                ) RETURNING id";
+        await using var cmd = new NpgsqlCommand(sql, con);
+
+        cmd.Parameters.AddWithValue("idpers", person.IdPerson);
+        cmd.Parameters.AddWithValue("idfreework", idFreeWork);
+        cmd.Parameters.AddWithValue("namestateorg", person.NameStateOrg);
+        cmd.Parameters.AddWithValue("nameorg", person.NameOrg);
+        cmd.Parameters.AddWithValue("phoneorg", person.PhoneOrg);
+        cmd.Parameters.AddWithValue("numreference", person.NumReference);
+        cmd.Parameters.AddWithValue("post", person.Post);
+        cmd.Parameters.AddWithValue("pedspecialty", person.PedSpecialty);
+        cmd.Parameters.AddWithValue("numcertificate", person.NumCertificate);
+
+        cmd.Parameters.AddWithValue("verificationarrival", person.VerificationArrival);
+        cmd.Parameters.AddWithValue("verificationyear1", person.VerificationYear1);
+        cmd.Parameters.AddWithValue("verificationyear2", person.VerificationYear2);
+        cmd.Parameters.AddWithValue("verificationyear3", person.VerificationYear3);
+        cmd.Parameters.AddWithValue("datetcontract", person.DatetContract);
+        cmd.Parameters.AddWithValue("commentary1", person.Commentary1);
+        cmd.Parameters.AddWithValue("datecrt", person.DateCrt);
+
+        cmd.Parameters.AddWithValue("educational", person.Educational);
+        cmd.Parameters.AddWithValue("cityorg", person.CityOrg);
+        cmd.Parameters.AddWithValue("infoorg", person.InfoOrg);
+        cmd.Parameters.AddWithValue("decree", person.Decree);
+        cmd.Parameters.AddWithValue("infoverificationarrival", person.InfoVerificationArrival);
+
+        cmd.Parameters.AddWithValue("commentary2", person.Commentary2);
+        cmd.Parameters.AddWithValue("plandop", person.PlanDop);
+        cmd.Parameters.AddWithValue("phonecity", person.PhoneCity);
+
+        cmd.Parameters.AddWithValue("mailwork", person.MailWork);
+        cmd.Parameters.AddWithValue("idworkadress", idWorkAdress);
+
+        await cmd.PrepareAsync();
+
+        var row = (int)(cmd.ExecuteScalar() ?? throw new InvalidOperationException());
+        return row;
+    }
+
     public static async Task<int> AddPerson(Persons person)
     {
         await using var con = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["postgres"].ConnectionString);
@@ -144,7 +243,8 @@ public static class PostSqlService
             enteredmag,
             changesurname,
             othere,
-            phone3) values(
+            phone3,
+            old_id) values(
                     @idtypedepartment , 
                     @idtypequalification,
                     @surname,
@@ -172,9 +272,11 @@ public static class PostSqlService
                     @enteredmag,
                     @changesurname,
                     @othere,
-                    @phone3 ) RETURNING id";
+                    @phone3,
+                    @old_id) RETURNING id";
         await using var cmd = new NpgsqlCommand(sql, con);
 
+        cmd.Parameters.AddWithValue("old_id", person.Id);
         cmd.Parameters.AddWithValue("idtypedepartment", exists);
         cmd.Parameters.AddWithValue("idtypequalification", person.Qualification == "бакалавр" ? 1 : 2);
         cmd.Parameters.AddWithValue("surname", person.FirstName);
@@ -211,7 +313,7 @@ public static class PostSqlService
         await cmd.PrepareAsync();
 
         var row = (int)(cmd.ExecuteScalar() ?? throw new InvalidOperationException());
-        return row;
+        return person.Id;
     }
 
     public static async Task<int> AddUserRoles(int idRole, int idUser)

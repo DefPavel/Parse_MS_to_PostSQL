@@ -27,7 +27,6 @@ public static class MsSqlService
         }
         return array;
     }
-
     public static async Task<IEnumerable<Persons>> GetAllPersons()
     {
         var array = new List<Persons>();
@@ -61,7 +60,8 @@ public static class MsSqlService
                            " enteredMag          ," +   //24
                            " changeSurname       ," +   //25
                            " othere              ," +   //26
-                           " phone3 " +                 //27
+                           " phone3, " +                 //27
+                           " per.id " +
                            " from persons as per " +
                            " inner join department d on per.idTypeDepartment = d.id " +
                            " inner join  typeQualification tQ on per.idTypeQualification = tQ.id ";
@@ -100,11 +100,64 @@ public static class MsSqlService
                 ChangeSurname = rdr[25] != DBNull.Value ? rdr.GetString(25) : "",
                 Othere = rdr[26] != DBNull.Value ? rdr.GetString(26) : "",
                 Phone3 = rdr[27] != DBNull.Value ? rdr.GetString(27) : "",
+                Id = rdr[28] != DBNull.Value ? rdr.GetInt32(28) : 0,
 
             });
         }
         return array;
     }
+
+    public static async Task<IEnumerable<PersonWorks>> GetWorksToPerson(int idPerson)
+    {
+        var array = new List<PersonWorks>();
+        await using var con = new SqlConnection(_connectionString);
+        con.Open();
+        string sql = " select fW.nameFreeWork, nameStateOrg, nameOrg, post, pedSpecialty, numCertificate, numReference, verificationArrival, verificationYear1, verificationYear2, verificationYear3, datetContract, commentary1, dateCrt, educational, cityOrg, infoOrg, decree, infoVerificationArrival, commentary2, planDop, phoneOrg, phoneCity, mailWork, wC.nameCity "
+            + " from persons as per "
+            + " inner join persToWork pW on per.id = pW.idPers "
+            + " inner join freeWork fW on pW.idFreeWork = fW.id "
+            + " left join workCity wC on pW.idWorkAdress = wC.id "
+            + " where idPers = " + idPerson;
+
+        await using var cmd = new SqlCommand(sql, con);
+        await using var rdr = await cmd.ExecuteReaderAsync();
+        while (await rdr.ReadAsync())
+        {
+            array.Add(new PersonWorks
+            {
+                IdPerson = idPerson,
+                FreeWork = rdr[0] != DBNull.Value ? rdr.GetString(0) : "",
+                NameStateOrg = rdr[1] != DBNull.Value ? rdr.GetString(1) : "",
+                NameOrg = rdr[2] != DBNull.Value ? rdr.GetString(2) : "",
+                Post = rdr[3] != DBNull.Value ? rdr.GetString(3) : "",
+                PedSpecialty = rdr[4] != DBNull.Value ? rdr.GetString(4) : "",
+                NumCertificate = rdr[5] != DBNull.Value ? rdr.GetString(5) : "",
+                NumReference = rdr[6] != DBNull.Value ? rdr.GetString(6) : "",
+                VerificationArrival = rdr[7] != DBNull.Value ? rdr.GetString(7) : "",
+                VerificationYear1 = rdr[8] != DBNull.Value ? rdr.GetString(8) : "",
+                VerificationYear2 = rdr[9] != DBNull.Value ? rdr.GetString(9) : "",
+                VerificationYear3 = rdr[10] != DBNull.Value ? rdr.GetString(10) : "",
+                DatetContract = rdr[11] != DBNull.Value ? rdr.GetDateTime(11) : DateTime.MinValue,
+                Commentary1 = rdr[12] != DBNull.Value ? rdr.GetString(12) : "",
+                DateCrt = rdr[13] != DBNull.Value ? rdr.GetDateTime(13) : DateTime.Now,
+                Educational = rdr[14] != DBNull.Value ? rdr.GetString(14) : "",
+                CityOrg = rdr[15] != DBNull.Value ? rdr.GetString(15) : "",
+                InfoOrg = rdr[16] != DBNull.Value ? rdr.GetString(16) : "",
+                Decree = rdr[17] != DBNull.Value ? rdr.GetString(17) : "",
+                InfoVerificationArrival = rdr[18] != DBNull.Value ? rdr.GetString(18) : "",
+                Commentary2 = rdr[19] != DBNull.Value ? rdr.GetString(19) : "",
+                PlanDop = rdr[20] != DBNull.Value ? rdr.GetString(20) : "",
+                PhoneOrg =  rdr[21] != DBNull.Value ? rdr.GetString(21) : "",
+                PhoneCity = rdr[22] != DBNull.Value ? rdr.GetString(22) : "",
+                MailWork = rdr[23] != DBNull.Value ? rdr.GetString(23) : "",
+                WorkAdress = rdr[24] != DBNull.Value ? rdr.GetString(24) : ""
+
+            });
+        }
+        return array;
+    }
+
+
     public static async Task<IEnumerable<Departments>> GetAllDepartments()
     {
         var array = new List<Departments>();
@@ -123,7 +176,6 @@ public static class MsSqlService
         }
         return array;
     }
-
     public static async Task<IEnumerable<City>> GetAllCity()
     {
         var array = new List<City>();
